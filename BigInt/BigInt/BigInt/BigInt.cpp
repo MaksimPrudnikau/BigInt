@@ -65,6 +65,8 @@ BigInt::BigInt(const char* input) : neg(false)
 
 BigInt::BigInt(const string input) : BigInt(input.c_str()) {};
 
+BigInt::BigInt(long long input) : BigInt(to_string(input)) {};
+
 BigInt& BigInt::operator= (const char* input)
 {
 	string buff(input);
@@ -138,6 +140,21 @@ bool BigInt::operator== (const BigInt& right) const
 	return false;
 }
 
+bool BigInt::operator== (long long right) const
+{
+	return *this == BigInt(right) ? true : false;
+}
+
+bool BigInt::operator== (string right) const
+{
+	return *this == BigInt(right) ? true : false;
+}
+
+bool BigInt::operator== (const char* right) const
+{
+	return *this == BigInt(right) ? true : false;
+}
+
 bool BigInt::operator< (const BigInt& right) const
 {
 	//Если знаки равны
@@ -197,7 +214,7 @@ bool BigInt::operator>= (const BigInt& right) const
 	return (*this > right || *this == right);
 }
 
-//TODO
+
 const BigInt operator+ (BigInt left, const BigInt& right)
 {
 	if (!left.neg && !right.neg) // x + y
@@ -220,44 +237,51 @@ const BigInt operator+ (BigInt left, const BigInt& right)
 	}
 	else if (!left.neg && right.neg) // x + (-y) == -(-x + y)
 	{
-		return -((-left) + right);
+		return left - (-right);
 	}
 	else if (left.neg && !right.neg)// -x + y = -(x + (-y))
 	{
-		return -(left + (-right));
+		return right - (-left);
 	}
 	else if (left.neg && right.neg) // -x + (-y) == -(x + y)
 	{
-		return -(left + right);
+		return -(-left + (-right));
 	}
 }
 
-//TODO
-const BigInt operator- (BigInt left, const BigInt& right) 
+
+const BigInt operator- (BigInt left, const BigInt& right)
 {
-	if (!left.neg && !right.neg)
+	if (!left.neg && !right.neg) // x - y
 	{
-		int carry = 0;
-		for (size_t i = 0; i < right._digits.size() || carry != 0; ++i) {
-			left._digits[i] -= carry + (i < right._digits.size() ? right._digits[i] : 0);
-			carry = left._digits[i] < 0;
-			if (carry != 0) left._digits[i] += big_integer::BASE;
+		if (left < right)
+		{
+			return -(right - left);
 		}
 
-		left._remove_leading_zeros();
+		int carry = 0;
+		for (size_t i = 0; i < right.val.size() || carry != 0; ++i) 
+		{
+			left.val[i] -= carry + (i < right.val.size() ? right.val[i] : 0);
+			carry = left.val[i] < 0;
+			if (carry != 0)
+			{
+				left.val[i] += 10;
+			}
+		}
 		return left;
 	}
 	else if (left.neg && !right.neg) // -x - y = -(x + y)
 	{
-		return -(left + right);
+		return -(-left + right);
 	}
 	else if (!left.neg && right.neg) // x - (-y) = x + y
 	{
-		return left + right;
+		return left + (-right);
 	}
-	else if (left.neg && right.neg)
+	else if (left.neg && right.neg) // -x - (-y) = -x + y
 	{
-
+		return -left - (-right);
 	}
 }
 

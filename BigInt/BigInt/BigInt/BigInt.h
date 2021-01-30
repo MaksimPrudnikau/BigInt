@@ -17,6 +17,7 @@ public:
 	BigInt() = default;
 	BigInt(const char*);
 	BigInt(const string);
+	BigInt(long long);
 
 	//Конструктор копирования запрещён
 	BigInt(const BigInt&);
@@ -24,9 +25,11 @@ public:
 	//Унарные операторы
 	const BigInt operator+ () const;
 	const BigInt operator- () const; // -(-x)
-
 	//Операторы сравнения
 	bool operator== (const BigInt&) const;
+	bool operator== (long long) const;
+	bool operator== (string) const;
+	bool operator== (const char*) const;
 	bool operator< (const BigInt&) const;
 	bool operator> (const BigInt&) const;
 	bool operator!= (const BigInt&) const;
